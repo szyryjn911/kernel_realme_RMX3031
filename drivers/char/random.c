@@ -722,6 +722,7 @@ retry:
 
 	if (has_initialized) {
 		r->initialized = 1;
+		wake_up_interruptible(&random_read_wait);
 		kill_fasync(&fasync, SIGIO, POLL_IN);
 	}
 
@@ -739,6 +740,13 @@ retry:
 
 //			entropy_bits = ENTROPY_BITS(r);
 			entropy_bits = r->entropy_count >> ENTROPY_SHIFT;
+		}
+
+		/* initialize the blocking pool if necessary */
+		if (entropy_bits >= random_read_wakeup_bits &&
+		    !other->initialized) {
+			schedule_work(&other->push_work);
+			return;
 		}
 
 		/* should we wake readers? */
