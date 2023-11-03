@@ -1522,7 +1522,8 @@ static void mmc_blk_cqe_complete_rq(struct mmc_queue *mq, struct request *req)
 		else {
 			mt_biolog_cqhci_complete(req->tag);
 			__blk_mq_end_request(req, BLK_STS_OK);
-		}
+	} else if (mq->in_recovery) {
+		blk_mq_requeue_request(req, true);
 	} else {
 		mt_biolog_cqhci_complete(req->tag);
 		blk_mq_end_request(req, BLK_STS_OK);
