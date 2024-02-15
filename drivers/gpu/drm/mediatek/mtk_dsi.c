@@ -102,6 +102,13 @@
 #define DSI_DUAL_EN BIT(4)
 #define CON_CTRL_FLD_REG_DUAL_EN REG_FLD_MSB_LSB(4, 4)
 #define DSI_CM_WAIT_FIFO_FULL_EN BIT(27)
+#define DSI_PSCTRL		0x1c
+#define DSI_PS_WC			0x3fff
+#define DSI_PS_SEL			(3 << 16)
+#define PACKED_PS_16BIT_RGB565		(0 << 16)
+#define PACKED_PS_18BIT_RGB666		(1 << 16)
+#define LOOSELY_PS_24BIT_RGB666		(2 << 16)
+#define PACKED_PS_24BIT_RGB888		(3 << 16)
 
 #define DSI_MODE_CTRL 0x14
 #define MODE (3)
@@ -1484,7 +1491,43 @@ static void mtk_dsi_rxtx_control(struct mtk_dsi *dsi)
 	writel(DSI_WMEM_CONTI, dsi->regs + DSI_MEM_CONTI);
 }
 
+<<<<<<< HEAD
 static void mtk_dsi_calc_vdo_timing(struct mtk_dsi *dsi)
+=======
+static void mtk_dsi_ps_control(struct mtk_dsi *dsi)
+{
+	u32 dsi_tmp_buf_bpp;
+	u32 tmp_reg;
+
+	switch (dsi->format) {
+	case MIPI_DSI_FMT_RGB888:
+		tmp_reg = PACKED_PS_24BIT_RGB888;
+		dsi_tmp_buf_bpp = 3;
+		break;
+	case MIPI_DSI_FMT_RGB666:
+		tmp_reg = LOOSELY_PS_24BIT_RGB666;
+		dsi_tmp_buf_bpp = 3;
+		break;
+	case MIPI_DSI_FMT_RGB666_PACKED:
+		tmp_reg = PACKED_PS_18BIT_RGB666;
+		dsi_tmp_buf_bpp = 3;
+		break;
+	case MIPI_DSI_FMT_RGB565:
+		tmp_reg = PACKED_PS_16BIT_RGB565;
+		dsi_tmp_buf_bpp = 2;
+		break;
+	default:
+		tmp_reg = PACKED_PS_24BIT_RGB888;
+		dsi_tmp_buf_bpp = 3;
+		break;
+	}
+
+	tmp_reg += dsi->vm.hactive * dsi_tmp_buf_bpp & DSI_PS_WC;
+	writel(tmp_reg, dsi->regs + DSI_PSCTRL);
+}
+
+static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+>>>>>>> a5e660dba9ff (drm/mediatek: dsi: Fix DSI RGB666 formats and definitions)
 {
 	u32 horizontal_sync_active_byte;
 	u32 horizontal_backporch_byte;
