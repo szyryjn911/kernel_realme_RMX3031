@@ -354,8 +354,8 @@ void arm64_set_ssbd_mitigation(bool state)
 		 * CPUs could mis-speculate branches and bypass a conditional
 		 * barrier.
 		 */
-		if (IS_ENABLED(CONFIG_ARM64_ERRATUM_3194386))
-			spec_bar();
+		//if (IS_ENABLED(CONFIG_ARM64_ERRATUM_3194386))
+		//	spec_bar();
 
 		return;
 	}
@@ -942,7 +942,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
 #ifdef CONFIG_ARM64_ERRATUM_3194386
 	{
 		.desc = "SSBS not fully self-synchronizing",
-		.capability = ARM64_WORKAROUND_SPECULATIVE_SSBS,
+//		.capability = ARM64_WORKAROUND_SPECULATIVE_SSBS,
 		ERRATA_MIDR_RANGE_LIST(erratum_spec_ssbs_list),
 	},
 #endif
