@@ -465,6 +465,7 @@ ifeq ($(OPPO_HIGH_TEMP_VERSION),true)
 KBUILD_CFLAGS += -DCONFIG_HIGH_TEMP_VERSION
 endif
 #endif /* OPLUS_FEATURE_CHG_BASIC */
+KBUILD_CFLAGS += $(call cc-option,-Wno-error=default-const-init-var-unsafe)
 
 #ifdef OPLUS_FEATURE_MEMLEAK_DETECT
 ifeq ($(AGING_DEBUG_MASK),1)
